@@ -86,15 +86,13 @@ class Pushups:
         prev_pup = prev_pup_file.readlines()
         prev_pup_file.close()
 
-        print(prev_pup)
-
         # Generate a random choice that isn't blacklisted or the previous choice
         self.pup0 = random.choice(pup_options)
         while prev_pup.count(self.pup0) or self.blacklist.count(self.pup0):
             self.pup0 = random.choice(pup_options)     
  
         self.pup1 = random.choice(pup_options)
-        while prev_pup.count(self.pup1) or self.blacklist.count(self.pup1):
+        while prev_pup.count(self.pup1) or self.blacklist.count(self.pup1) or self.pup1 == self.pup0:
             self.pup1 = random.choice(pup_options)
 
         # Save workout selection
