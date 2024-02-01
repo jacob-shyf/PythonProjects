@@ -3,5 +3,6 @@ Swimming
 Biking
 Circuit Training
 Sprint Workout
+Hill Sprints
 Track Workout
-Hill Workout
+Interval Workout

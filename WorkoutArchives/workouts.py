@@ -39,9 +39,11 @@ class CYOA:
         self.prev_cyoa = 'prev_cyoa.txt'
         self.archive = 'WorkoutArchives/CYOA/'
         self.cyoa_wo = 'Fly away Stanley, be free!'
-        self.blacklist = ['Lacrosse Workout\n']
+        self.blacklist = ['Lacrosse\n']
+        self.hi_impact_cyoa = ['Barefoot Jogging\n', 'Tempo/Threshold Run\n']
+        self.hi_impact_hit = ['Sprint Workout', 'Hill Sprints', 'Track Workout', 'Interval Workout', 'Circuit Training']
 
-    def selectCYOA(self):
+    def selectCYOA(self, HIT):
         # Read CYOA workout options
         cyoa_file = open(self.archive + self.cyoa, 'r')
         cyoa_options = cyoa_file.readlines()
@@ -51,6 +53,10 @@ class CYOA:
         prev_cyoa_file = open(self.archive + self.prev_cyoa, 'r')
         prev_wo = prev_cyoa_file.readline()
         prev_cyoa_file.close()
+
+        if(self.hi_impact_hit.count(HIT)):
+            for hiw in self.hi_impact_cyoa:
+                self.blacklist.append(hiw)
 
         # Generate a random choice that isn't blacklisted or the previous choice
         self.cyoa_wo = random.choice(cyoa_options)
