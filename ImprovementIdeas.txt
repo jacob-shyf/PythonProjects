@@ -1,0 +1,2 @@
+1. Make sure we don't get a duplicate selection for HIT and CYOA. (i.e. Rowing and Rowing)
+2. Optionally pick exercises for certain workouts, like Circuit Training.
