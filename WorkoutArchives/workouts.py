@@ -1,115 +1,71 @@
 import random
 
-# High Intensity Training
-class HIT:
+# General Workout Selector
+class WorkoutSelector:
     def __init__(self):
-        self.hit = 'hit.txt'
-        self.prev_hit = 'prev_hit.txt'
-        self.archive = 'WorkoutArchives/HIT/'
-        self.hit_wo = 'Nut up or shut up!'
-        self.blacklist = []
+        self.workouts = {
+                'CYOA' : 'Fly away Stanley, be free!',
+                'HIT' : 'Nut up or shut up!',
+                'X-Train' : 'Get \'er done!',
+                'Pullups' : 'Pussy baby bitch!',
+                'Pushups' : 'Pussy baby bitch!' }
+        self.workout_options = []
+        self.last_workout = ''
 
-    def selectHIT(self):
-        # Read CYOA workout options
-        hit_file = open(self.archive + self.hit, 'r')
-        hit_options = hit_file.readlines()
-        hit_file.close()
+    def getBlacklist(self, wo_type):
+        blacklist = []
 
-        # Read previous workout selection
-        prev_hit_file = open(self.archive + self.prev_hit, 'r')
-        prev_wo = prev_hit_file.readline()
-        prev_hit_file.close()
+        if wo_type == 'CYOA':
+            # High impact activities are off-limits for CYOA
+            blacklist = ['Barefoot Jogging\n', 'Lacrosse\n']
+        elif wo_type == 'X-Train':
+            cyoa_wo = self.workouts['CYOA'] + '\n'
+            ub_endurance = ['Swimming\n', 'Rowing\n', 'Climbing\n']
+            if cyoa_wo in ub_endurance:
+                # CYOA workout is an upper body endurnace workout,
+                # blacklist upperbody endurance cross training
+                for wo in ub_endurance:
+                    blacklist.append(wo)
+            else:
+                # CYOA workout is not an upper-body endurance workout,
+                # must select an upper-body endurance workout for
+                # cross training
+                for wo in self.workout_options:
+                    if wo not in ub_endurance:
+                        blacklist.append(wo)
+
+        return blacklist
+    
+    def selectWorkout(self, wo_type):
+        #check for valid name
+        if wo_type not in self.workouts:
+            return 'Invalid workout type!'
         
-        # Generate a random choice that isn't blacklisted or the previous choice
-        self.hit_wo = random.choice(hit_options)
-        while self.hit_wo == prev_wo or self.blacklist.count(self.hit_wo):
-            self.hit_wo = random.choice(hit_options)
+        # Define filenames
+        options_file = 'WorkoutArchives/' + wo_type + '/' + wo_type.lower() + '.txt'
+        last_wo_filename = 'WorkoutArchives/' + wo_type + '/prev_' + wo_type.lower() + '.txt'
 
-        # Save workout selection
-        prev_hit_file = open(self.archive + self.prev_hit, 'w')
-        prev_hit_file.write(self.hit_wo)
-        prev_hit_file.close()
+        # Get exercise options
+        options_file = open(options_file, 'r')
+        self.workout_options = options_file.readlines()
+        options_file.close()
 
-        self.hit_wo = self.hit_wo.strip()
+        # Get last workout
+        last_wo_file = open(last_wo_filename, 'r')
+        self.last_workout = last_wo_file.readline()
+        last_wo_file.close()
 
-# Choose-Your-Own-Adventure (Activitiy Ideas)
-class CYOA:
-    def __init__(self):
-        self.cyoa = 'cyoa.txt'
-        self.prev_cyoa = 'prev_cyoa.txt'
-        self.archive = 'WorkoutArchives/CYOA/'
-        self.cyoa_wo = 'Fly away Stanley, be free!'
-        self.blacklist = ['Lacrosse\n']
-        self.hi_impact_cyoa = ['Barefoot Jogging\n', 'Tempo/Threshold Run\n']
-        self.hi_impact_hit = ['Sprint Workout', 'Hill Sprints', 'Track Workout', 'Interval Workout', 'Circuit Training']
+        # Get Off Limits exercises
+        blacklist = self.getBlacklist(wo_type)
 
-    def selectCYOA(self, HIT):
-        # Read CYOA workout options
-        cyoa_file = open(self.archive + self.cyoa, 'r')
-        cyoa_options = cyoa_file.readlines()
-        cyoa_file.close()
+        #Generate a random workout selection
+        self.workouts[wo_type] = random.choice(self.workout_options)
+        while self.workouts[wo_type] == self.last_workout or blacklist.count(self.workouts[wo_type]):
+            self.workouts[wo_type] = random.choice(self.workout_options)
 
-        # Read previous workout selection
-        prev_cyoa_file = open(self.archive + self.prev_cyoa, 'r')
-        prev_wo = prev_cyoa_file.readline()
-        prev_cyoa_file.close()
+        # Store workout selections
+        last_wo_file = open(last_wo_filename, 'w')
+        last_wo_file.write(self.workouts[wo_type])
+        last_wo_file.close()
 
-        if(self.hi_impact_hit.count(HIT)):
-            for hiw in self.hi_impact_cyoa:
-                self.blacklist.append(hiw)
-
-        # Generate a random choice that isn't blacklisted or the previous choice
-        self.cyoa_wo = random.choice(cyoa_options)
-        while self.cyoa_wo == prev_wo or self.blacklist.count(self.cyoa_wo):
-            self.cyoa_wo = random.choice(cyoa_options)
-
-        # Save workout selection
-        prev_cyoa_file = open(self.archive + self.prev_cyoa, 'w')
-        prev_cyoa_file.write(self.cyoa_wo)
-        prev_cyoa_file.close()
-
-        self.cyoa_wo = self.cyoa_wo.strip()
-
-
-# Pushup Variation Selector
-class Pushups:
-    def __init__(self):
-        self.pushups = 'pushups.txt'
-        self.prev_pushups = 'prev_pushups.txt'
-        self.archive = 'WorkoutArchives/Pushups/'
-        self.pup0 = 'Strict'
-        self.pup1 = 'Wide'
-        self.blacklist = []
-
-    def selectPUP(self):
-        # Read Pushup Variation Options
-        pup_file = open(self.archive + self.pushups, 'r')
-        pup_options = pup_file.readlines()
-        pup_file.close()
-
-        # Read previous workout selection
-        prev_pup_file = open(self.archive + self.prev_pushups, 'r')
-        prev_pup = prev_pup_file.readlines()
-        prev_pup_file.close()
-
-        # Generate a random choice that isn't blacklisted or the previous choice
-        self.pup0 = random.choice(pup_options)
-        while prev_pup.count(self.pup0) or self.blacklist.count(self.pup0):
-            self.pup0 = random.choice(pup_options)     
- 
-        self.pup1 = random.choice(pup_options)
-        while prev_pup.count(self.pup1) or self.blacklist.count(self.pup1) or self.pup1 == self.pup0:
-            self.pup1 = random.choice(pup_options)
-
-        # Save workout selection
-        prev_pup_file = open(self.archive + self.prev_pushups, 'w')
-        prev_pup_file.write(self.pup0)
-        prev_pup_file.write(self.pup1)
-        prev_pup_file.close()
-
-        self.pup0 = self.pup0.strip()
-        self.pup1 = self.pup1.strip()
-
-
-
-
+        self.workouts[wo_type] = self.workouts[wo_type].strip()
