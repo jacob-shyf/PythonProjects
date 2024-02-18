@@ -1,4 +1,3 @@
-Strict
 Wide
 Diamond
 Knuckle
@@ -13,3 +12,4 @@ Sphinx
 Clap/Power
 Dips
 Thrusters
+Long Eccentric
